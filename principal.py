@@ -25,5 +25,6 @@ while True:
         if event == 49:
             menup.pedirarchivo()
             window.clear()
+            window.border(0)
             menup.pintarmenu()
 curses.endwin()

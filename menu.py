@@ -1,5 +1,6 @@
 import curses
 import os
+import csv
 
 class menu:
     def __init__(self, window):
@@ -49,8 +50,12 @@ class menu:
                             posx -= 1
                     else:
                         if(tecla == 459 or tecla == 10) and posx != posicioninicial:
-                            path += "\\csv\\" + auxnombre
-                            if os.path.exists(path):
-                                print("El archivo existe") 
+                            auxpath = path + "\\bloques\\" + auxnombre
+                            if os.path.exists(auxpath):
+                                self.window.addstr(18, 36, "EL ARCHIVO EXISTE")
+                                with open(auxpath, newline='') as File:
+                                    reader = csv.reader(File)
+                                    for row in reader:
+                                        print(row)
                             else:
                                 self.window.addstr(18, 36, "EL ARCHIVO NO EXISTE")
