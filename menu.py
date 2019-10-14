@@ -53,9 +53,35 @@ class menu:
                             auxpath = path + "\\bloques\\" + auxnombre
                             if os.path.exists(auxpath):
                                 self.window.addstr(18, 36, "EL ARCHIVO EXISTE")
+                                esclass = False
+                                esdata = False
+                                clase = ""
+                                data = ""
                                 with open(auxpath, newline='') as File:
                                     reader = csv.reader(File)
-                                    for row in reader:
-                                        print(row)
+                                    for reg in reader:
+                                        print(reg)
+                                        numero = 0
+                                        for carac in reg:
+                                            print(carac)
+                                            if carac == "CLASS" or carac == "class":
+                                                print("Entro a class")
+                                                esclass = True
+                                                esdata = False
+                                            else:
+                                                if carac == "DATA" or carac == "data":
+                                                    esdata = True
+                                                    esclass = False
+                                                else:
+                                                    if esclass == True:
+                                                        clase += carac
+                                                        print(clase)
+                                                    else:
+                                                        if esdata == True:
+                                                            data += carac + ","
+
+                                print(clase)
+                                data = data[:-1]
+                                print(data)
                             else:
                                 self.window.addstr(18, 36, "EL ARCHIVO NO EXISTE")
