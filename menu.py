@@ -1,6 +1,8 @@
 import curses
 import os
 import csv
+import time
+import hashlib
 
 class menu:
     def __init__(self, window):
@@ -12,7 +14,7 @@ class menu:
         self.window.addstr(17, 44, "3. REPORTES")
         self.window.addstr(18, 46, "4. SALIR")
 
-    def pedirarchivo(self):
+    def pedirarchivo(self, lista):
         self.window.clear()
         self.window.border(0)
         self.window.addstr(16, 41, "NOMBRE DEL ARCHIVO:")        
@@ -60,12 +62,9 @@ class menu:
                                 with open(auxpath, newline='') as File:
                                     reader = csv.reader(File)
                                     for reg in reader:
-                                        print(reg)
                                         numero = 0
                                         for carac in reg:
-                                            print(carac)
                                             if carac == "CLASS" or carac == "class":
-                                                print("Entro a class")
                                                 esclass = True
                                                 esdata = False
                                             else:
@@ -75,13 +74,19 @@ class menu:
                                                 else:
                                                     if esclass == True:
                                                         clase += carac
-                                                        print(clase)
                                                     else:
                                                         if esdata == True:
                                                             data += carac + ","
 
-                                print(clase)
                                 data = data[:-1]
-                                print(data)
+                                timestamp = ""
+                                timestamp += time.strftime("%d-%m-%y")
+                                timestamp += "-::"
+                                timestamp += time.strftime("%H:%M:%S")
+                                index = lista.getLastIndex()
+                                hashprevio = lista.getUltimoHash()
+                                hashnuevo = hashlib.sha256(str(index).encode('utf-8')+str(timestamp).encode('utf-8')+str(clase).encode('utf-8')+str(data).encode('utf-8')+str(hashprevio).encode('utf-8'))
+                                #lista.insertar(index, timestamp, clase, data, lista.getUltimoHash(), hashnuevo)
+                                return index, timestamp, clase, data, hashprevio, hashnuevo.hexdigest()
                             else:
                                 self.window.addstr(18, 36, "EL ARCHIVO NO EXISTE")
