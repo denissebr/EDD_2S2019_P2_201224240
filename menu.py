@@ -3,6 +3,7 @@ import os
 import csv
 import time
 import hashlib
+import graficar
 
 class menu:
     def __init__(self, window):
@@ -14,12 +15,37 @@ class menu:
         self.window.addstr(17, 44, "3. REPORTES")
         self.window.addstr(18, 46, "4. SALIR")
 
+    def menureportes(self, lista, data):
+        self.window.clear()
+        self.window.border(0)
+        self.window.addstr(0, 0, "PRESIONAR ESC PARA REGRESAR")
+        self.window.addstr(0, 46, "REPORTES")
+        self.window.addstr(16, 39, "1. REPORTE BLOCKCHAIN")
+        self.window.addstr(17, 34, "2. ARBOL DE BLOQUE SELECCIONADO")
+        self.window.addstr(18, 38, "3. RECORRIDOS DEL ARBOL")
+        gra = graficar.graficar(self.window)
+        while True:
+            event = self.window.getch()
+            if event == 49:
+                gra.graficar_lista(lista)
+            else:
+                if event == 27:
+                    break
+                else:
+                    if event == 50:
+                        gra.graficar_arbol(data)
+                    else:
+                        if event == 29:
+                            gra.graficar_arbol(data)
+
+
     def pedirarchivo(self, lista):
         self.window.clear()
         self.window.border(0)
         self.window.addstr(16, 41, "NOMBRE DEL ARCHIVO:")        
         self.window.addstr(17, 41, "PRESIONE ENTER PARA CARGAR")
         self.window.addstr(0, 0, "PRESIONAR ESC PARA REGRESAR")
+        self.window.addstr(0, 42, "INSERTAR BLOQUE")
         path = os.getcwd()
         tecla = -1
         posx = posicioninicial = 61
@@ -27,7 +53,7 @@ class menu:
         while True:
             tecla = self.window.getch()
             if tecla == 27:
-                break
+                return None, None, None, None, None, None
             else: 
                 if (tecla > 31 and tecla < 127):
                     self.window.clear()
