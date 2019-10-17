@@ -120,12 +120,8 @@ class graficar:
                         else:
                             if (tecla == 459 or tecla == 10) and posicioninicial != posx:
                                 break
-            try:
-                json_data = json.loads(str(data))
-                self.recorrerjson(json_data) 
-                print("es json")
-            except:
-                print("no es json")
+            self.recorrerjson(data) 
+            print("es json")
         else:
             self.window.addstr(16, 15, "NO HA SELECCIONADO NINGUN BLOQUE")
             while True:
@@ -134,18 +130,24 @@ class graficar:
                     break
         
     def recorrerjson(self, data_json):
-        print(data_json)
-        for carac in data_json:
-            print(carac)
-            if carac == 'value':
-                print(data_json['value'])
-            else:
-                if carac == 'right':
-                    if data_json['right'] != 'None' and data_json is not None:
-                        self.recorrerjson(data_json['right'])
+        try:
+            json_data = json.loads(data_json)
+            print(data_json)
+            for carac in json_data:
+                print(carac)
+                if carac == 'value':
+                    print(json_data['value'])
+                    
                 else:
-                    if data_json['left'] != 'None' and data_json is not None:
-                        self.recorrerjson(data_json['left'])
+                    if carac == 'left':
+                        print("json", json.dumps(json_data['left']))
+                        #print(json.loads(str(json_data['left'])))
+                        self.recorrerjson(json.dumps(json_data['left']))
+                    else:
+                        print(json_data['right'])
+                        self.recorrerjson(json.dumps(json_data['right']))
+        except:
+            print("execpt")
     
     def graficar_recorridos(self, data):
         self.window.clear()
