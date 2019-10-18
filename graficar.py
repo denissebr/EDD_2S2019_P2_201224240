@@ -240,10 +240,32 @@ class graficar:
                 self.graficar_a = "digraph{\n"
                 self.graficar_a += str("node[shape = record];\n")
                 self.aux_preorden(self.arbol.raiz, "R")
+                indiceaux = 0
+                while indiceaux != self.indicenodo - 1:
+                    self.graficar_a += str("a_" + str(indiceaux) + "->a_" + str(indiceaux + 1) + ";\n")
+                    indiceaux += 1
                 self.graficar_a += str("}")
                 grafo = pydot.graph_from_dot_data(self.graficar_a)
                 (g,) = grafo
                 g.write_jpg(auxnombre + ".jpg")
+                self.graficar_a = "INICIO->"
+                self.mostrar_pre_consola(self.arbol.raiz)
+                self.graficar_a += "FIN"
+                posx = 10
+                posy = 5
+                self.window.clear()
+                self.window.border(0)
+                self.window.addstr(0, 0, "PRESIONAR ESC PARA REGRESAR")
+                for cara in self.graficar_a:
+                    if posx == 90:
+                        posx = 10
+                        posy += 1
+                    self.window.addstr(posy, posx, cara)
+                    posx += 1
+                while True:
+                    event = self.window.getch()
+                    if event == 27:
+                        break
 
     def aux_preorden(self, nodo, nombre):
         if nodo is not None:
@@ -251,3 +273,194 @@ class graficar:
             self.indicenodo += 1
             self.aux_preorden(nodo.getIzquierdo(), "I")
             self.aux_preorden(nodo.getDerecho(), "D")
+
+    def mostrar_pre_consola(self, nodo):
+        if nodo is not None:
+            self.graficar_a += str(nodo.getCarnet())
+            self.graficar_a += str("-")
+            self.graficar_a += str(nodo.getNombre())
+            self.graficar_a += str("->")
+            self.mostrar_pre_consola(nodo.getIzquierdo())
+            self.mostrar_pre_consola(nodo.getDerecho())
+
+    def graficar_recorrido_postorden(self, data):
+        self.arbol = arbol.arbol()
+        self.window.clear()
+        self.window.border(0)
+        self.window.addstr(0, 0, "PRESIONAR ESC PARA REGRESAR")
+        self.graficar_a = ""
+        self.indicenodo = 0
+        if data is not None:
+            self.window.addstr(16, 15, "NOMBRE DEL REPORTE:")
+            self.window.addstr(17, 15, "PRESIONAR ENTER PARA GENERAR REPORTE")
+            posicioninicial = posx = 35
+            auxnombre = ""
+            tecla = -1
+            while True:
+                tecla = self.window.getch()
+                if tecla == 27:
+                    break
+                else:
+                    if tecla > 31 and tecla < 127:
+                        self.window.clear()
+                        self.window.border(0)
+                        self.window.addstr(0, 0, "PRESIONAR ESC PARA REGRESAR")
+                        self.window.addstr(16, 15, "NOMBRE DEL REPORTE:")
+                        self.window.addstr(17, 15, "PRESIONAR ENTER PARA GENERAR REPORTE")
+                        self.window.addstr(16, posicioninicial, auxnombre)
+                        self.window.addstr(16, posx, chr(tecla))
+                        posx += 1
+                        auxnombre += chr(tecla)
+                    else:
+                        if tecla == 8:
+                            if posx != posicioninicial:
+                                self.window.clear()
+                                self.window.border(0)
+                                self.window.addstr(0, 0, "PRESIONAR ESC PARA REGRESAR")
+                                self.window.addstr(16, 15, "NOMBRE DEL REPORTE:")
+                                self.window.addstr(17, 15, "PRESIONAR ENTER PARA GENERAR REPORTE")
+                                auxnombre = auxnombre[:-1]
+                                self.window.addstr(16, posicioninicial, auxnombre)
+                                posx -= 1
+                        else:
+                            if (tecla == 459 or tecla == 10) and posicioninicial != posx:
+                                break
+            
+            if posicioninicial != posx:
+                self.recorrerjson(data)
+                self.graficar_a = "digraph{\n"
+                self.graficar_a += str("node[shape = record];\n")
+                self.aux_postorden(self.arbol.raiz, "R")
+                indiceaux = 0
+                while indiceaux != self.indicenodo - 1:
+                    self.graficar_a += str("a_" + str(indiceaux) + "->a_" + str(indiceaux + 1) + ";\n")
+                    indiceaux += 1
+                self.graficar_a += str("}")
+                grafo = pydot.graph_from_dot_data(self.graficar_a)
+                (g,) = grafo
+                g.write_jpg(auxnombre + ".jpg")
+                self.graficar_a = "INICIO->"
+                self.mostrar_post_consola(self.arbol.raiz)
+                self.graficar_a += "FIN"
+                posx = 10
+                posy = 5
+                self.window.clear()
+                self.window.border(0)
+                self.window.addstr(0, 0, "PRESIONAR ESC PARA REGRESAR")
+                for cara in self.graficar_a:
+                    if posx == 90:
+                        posx = 10
+                        posy += 1
+                    self.window.addstr(posy, posx, cara)
+                    posx += 1
+                while True:
+                    event = self.window.getch()
+                    if event == 27:
+                        break
+    
+    def aux_postorden(self, nodo, nombre):
+        if nodo is not None:
+            self.aux_postorden(nodo.getIzquierdo(), "I")
+            self.aux_postorden(nodo.getDerecho(), "D")
+            self.graficar_a += str("a_" + str(self.indicenodo) + "[label=\"" + nodo.getCarnet() + "\\n" + nodo.getNombre() + "\"];\n")
+            self.indicenodo += 1
+
+    def mostrar_post_consola(self, nodo):
+        if nodo is not None:
+            self.mostrar_post_consola(nodo.getIzquierdo())
+            self.mostrar_post_consola(nodo.getDerecho())
+            self.graficar_a += str(nodo.getCarnet())
+            self.graficar_a += str("-")
+            self.graficar_a += str(nodo.getNombre())
+            self.graficar_a += str("->")
+
+    def graficar_recorrido_inorden(self, data):
+        self.arbol = arbol.arbol()
+        self.window.clear()
+        self.window.border(0)
+        self.window.addstr(0, 0, "PRESIONAR ESC PARA REGRESAR")
+        self.graficar_a = ""
+        self.indicenodo = 0
+        if data is not None:
+            self.window.addstr(16, 15, "NOMBRE DEL REPORTE:")
+            self.window.addstr(17, 15, "PRESIONAR ENTER PARA GENERAR REPORTE")
+            posicioninicial = posx = 35
+            auxnombre = ""
+            tecla = -1
+            while True:
+                tecla = self.window.getch()
+                if tecla == 27:
+                    break
+                else:
+                    if tecla > 31 and tecla < 127:
+                        self.window.clear()
+                        self.window.border(0)
+                        self.window.addstr(0, 0, "PRESIONAR ESC PARA REGRESAR")
+                        self.window.addstr(16, 15, "NOMBRE DEL REPORTE:")
+                        self.window.addstr(17, 15, "PRESIONAR ENTER PARA GENERAR REPORTE")
+                        self.window.addstr(16, posicioninicial, auxnombre)
+                        self.window.addstr(16, posx, chr(tecla))
+                        posx += 1
+                        auxnombre += chr(tecla)
+                    else:
+                        if tecla == 8:
+                            if posx != posicioninicial:
+                                self.window.clear()
+                                self.window.border(0)
+                                self.window.addstr(0, 0, "PRESIONAR ESC PARA REGRESAR")
+                                self.window.addstr(16, 15, "NOMBRE DEL REPORTE:")
+                                self.window.addstr(17, 15, "PRESIONAR ENTER PARA GENERAR REPORTE")
+                                auxnombre = auxnombre[:-1]
+                                self.window.addstr(16, posicioninicial, auxnombre)
+                                posx -= 1
+                        else:
+                            if (tecla == 459 or tecla == 10) and posicioninicial != posx:
+                                break
+            
+            if posicioninicial != posx:
+                self.recorrerjson(data)
+                self.graficar_a = "digraph{\n"
+                self.graficar_a += str("node[shape = record];\n")
+                self.aux_inorden(self.arbol.raiz, "R")
+                indiceaux = 0
+                while indiceaux != self.indicenodo - 1:
+                    self.graficar_a += str("a_" + str(indiceaux) + "->a_" + str(indiceaux + 1) + ";\n")
+                    indiceaux += 1
+                self.graficar_a += str("}")
+                grafo = pydot.graph_from_dot_data(self.graficar_a)
+                (g,) = grafo
+                g.write_jpg(auxnombre + ".jpg")
+                self.graficar_a = "INICIO->"
+                self.mostrar_in_consola(self.arbol.raiz)
+                self.graficar_a += "FIN"
+                posx = 10
+                posy = 5
+                self.window.clear()
+                self.window.border(0)
+                self.window.addstr(0, 0, "PRESIONAR ESC PARA REGRESAR")
+                for cara in self.graficar_a:
+                    if posx == 90:
+                        posx = 10
+                        posy += 1
+                    self.window.addstr(posy, posx, cara)
+                    posx += 1
+                while True:
+                    event = self.window.getch()
+                    if event == 27:
+                        break
+    
+    def aux_inorden(self, nodo, nombre):
+        if nodo is not None:
+            self.aux_inorden(nodo.getIzquierdo(), "I")
+            self.graficar_a += str("a_" + str(self.indicenodo) + "[label=\"" + nodo.getCarnet() + "\\n" + nodo.getNombre() + "\"];\n")
+            self.indicenodo += 1
+            self.aux_inorden(nodo.getDerecho(), "D")
+
+    def mostrar_in_consola(self, nodo):
+        if nodo is not None:
+            self.mostrar_in_consola(nodo.getIzquierdo())
+            self.graficar_a += str(nodo.getCarnet())
+            self.graficar_a += str("-")
+            self.graficar_a += str(nodo.getNombre())
+            self.graficar_a += str("->")
+            self.mostrar_in_consola(nodo.getDerecho())

@@ -51,6 +51,12 @@ class menu:
                                 else:
                                     if event1 == 49:
                                         gra.graficar_recorrido_preorden(data)
+                                    else:
+                                        if event1 == 50:
+                                            gra.graficar_recorrido_postorden(data)
+                                        else:
+                                            if event1 == 51:
+                                                gra.graficar_recorrido_inorden(data)
 
     def pedirarchivo(self, lista):
         self.window.clear()
