@@ -16,15 +16,16 @@ class menu:
         self.window.addstr(18, 46, "4. SALIR")
 
     def menureportes(self, lista, data):
-        self.window.clear()
-        self.window.border(0)
-        self.window.addstr(0, 0, "PRESIONAR ESC PARA REGRESAR")
-        self.window.addstr(0, 46, "REPORTES")
-        self.window.addstr(16, 39, "1. REPORTE BLOCKCHAIN")
-        self.window.addstr(17, 34, "2. ARBOL DE BLOQUE SELECCIONADO")
-        self.window.addstr(18, 38, "3. RECORRIDOS DEL ARBOL")
+        
         gra = graficar.graficar(self.window)
         while True:
+            self.window.clear()
+            self.window.border(0)
+            self.window.addstr(0, 0, "PRESIONAR ESC PARA REGRESAR")
+            self.window.addstr(0, 46, "REPORTES")
+            self.window.addstr(16, 39, "1. REPORTE BLOCKCHAIN")
+            self.window.addstr(17, 34, "2. ARBOL DE BLOQUE SELECCIONADO")
+            self.window.addstr(18, 38, "3. RECORRIDOS DEL ARBOL")
             event = self.window.getch()
             if event == 49:
                 gra.graficar_lista(lista)
@@ -35,9 +36,21 @@ class menu:
                     if event == 50:
                         gra.graficar_arbol(data)
                     else:
-                        if event == 29:
-                            gra.graficar_arbol(data)
-
+                        if event == 51:
+                            while True:
+                                event1 = self.window.getch()
+                                self.window.clear()
+                                self.window.border(0)
+                                self.window.addstr(0, 0, "PRESIONAR ESC PARA REGRESAR")
+                                self.window.addstr(0, 41, "TIPOS DE RECORRIDO")
+                                self.window.addstr(16, 39, "1. RECORRIDO PREORDEN")
+                                self.window.addstr(17, 39, "2. RECORRIDO POSTORDEN")
+                                self.window.addstr(18, 40, "3. RECORRIDO INORDEN")
+                                if event1 == 27:
+                                    break
+                                else:
+                                    if event1 == 49:
+                                        gra.graficar_recorrido_preorden(data)
 
     def pedirarchivo(self, lista):
         self.window.clear()
@@ -62,6 +75,7 @@ class menu:
                     self.window.addstr(16, 41, "NOMBRE DEL ARCHIVO:")
                     self.window.addstr(17, 41, "PRESIONE ENTER PARA CARGAR")
                     self.window.addstr(0, 0, "PRESIONAR ESC PARA REGRESAR")
+                    self.window.addstr(0, 42, "INSERTAR BLOQUE")
                     self.window.addstr(16, posicioninicial, auxnombre)
                     self.window.addstr(16, posx, chr(tecla))
                     posx += 1
@@ -74,6 +88,7 @@ class menu:
                             self.window.addstr(16, 41, "NOMBRE DEL ARCHIVO:")
                             self.window.addstr(17, 41, "PRESIONE ENTER PARA CARGAR")
                             self.window.addstr(0, 0, "PRESIONAR ESC PARA REGRESAR")
+                            self.window.addstr(0, 42, "INSERTAR BLOQUE")
                             auxnombre = auxnombre[:-1]
                             self.window.addstr(16, posicioninicial, auxnombre)
                             posx -= 1

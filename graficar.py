@@ -132,7 +132,8 @@ class graficar:
                 grafo = pydot.graph_from_dot_data(self.graficar_a)
                 (g,) = grafo
                 g.write_jpg(auxnombre + ".jpg")
-            print("es json")
+                return
+            #print("es json")
         else:
             self.window.addstr(16, 15, "NO HA SELECCIONADO NINGUN BLOQUE")
             while True:
@@ -143,22 +144,22 @@ class graficar:
     def recorrerjson(self, data_json):
         try:
             json_data = json.loads(data_json)
-            print(data_json)
+            #print(data_json)
             for carac in json_data:
-                print(carac)
+             #   print(carac)
                 if carac == 'value':
-                    print(json_data['value'])
+              #      print(json_data['value'])
                     auxval = str(json_data['value']).split("-")
                     carnet = auxval[0]
                     nombre = auxval[1]
                     self.arbol.insertar(carnet, nombre)
                 else:
                     if carac == 'left':
-                        print("json", json.dumps(json_data['left']))
+                        #print("json", json.dumps(json_data['left']))
                         #print(json.loads(str(json_data['left'])))
                         self.recorrerjson(json.dumps(json_data['left']))
                     else:
-                        print(json_data['right'])
+                        #print(json_data['right'])
                         self.recorrerjson(json.dumps(json_data['right']))
         except:
             print("execpt")
@@ -191,21 +192,62 @@ class graficar:
                 auxnombre = nombre + "D"
                 self.relacionar(nod.getDerecho(), auxnombre)
     
-    def graficar_recorridos(self, data):
+    def graficar_recorrido_preorden(self, data):
+        self.arbol = arbol.arbol()
         self.window.clear()
         self.window.border(0)
         self.window.addstr(0, 0, "PRESIONAR ESC PARA REGRESAR")
+        self.graficar_a = ""
+        self.indicenodo = 0
         if data is not None:
-            try:
-                json_data = json.loads(str(data))
-                for dato in json_data:
-                    print(dato)
-                print("es json")
-            except:
-                print("no es json")
-        else:
-            self.window.addstr(16, 15, "NO HA SELECCIONADO NINGUN BLOQUE")
+            self.window.addstr(16, 15, "NOMBRE DEL REPORTE:")
+            self.window.addstr(17, 15, "PRESIONAR ENTER PARA GENERAR REPORTE")
+            posicioninicial = posx = 35
+            auxnombre = ""
+            tecla = -1
             while True:
-                event = self.window.getch()
-                if event == 27:
+                tecla = self.window.getch()
+                if tecla == 27:
                     break
+                else:
+                    if tecla > 31 and tecla < 127:
+                        self.window.clear()
+                        self.window.border(0)
+                        self.window.addstr(0, 0, "PRESIONAR ESC PARA REGRESAR")
+                        self.window.addstr(16, 15, "NOMBRE DEL REPORTE:")
+                        self.window.addstr(17, 15, "PRESIONAR ENTER PARA GENERAR REPORTE")
+                        self.window.addstr(16, posicioninicial, auxnombre)
+                        self.window.addstr(16, posx, chr(tecla))
+                        posx += 1
+                        auxnombre += chr(tecla)
+                    else:
+                        if tecla == 8:
+                            if posx != posicioninicial:
+                                self.window.clear()
+                                self.window.border(0)
+                                self.window.addstr(0, 0, "PRESIONAR ESC PARA REGRESAR")
+                                self.window.addstr(16, 15, "NOMBRE DEL REPORTE:")
+                                self.window.addstr(17, 15, "PRESIONAR ENTER PARA GENERAR REPORTE")
+                                auxnombre = auxnombre[:-1]
+                                self.window.addstr(16, posicioninicial, auxnombre)
+                                posx -= 1
+                        else:
+                            if (tecla == 459 or tecla == 10) and posicioninicial != posx:
+                                break
+            
+            if posicioninicial != posx:
+                self.recorrerjson(data)
+                self.graficar_a = "digraph{\n"
+                self.graficar_a += str("node[shape = record];\n")
+                self.aux_preorden(self.arbol.raiz, "R")
+                self.graficar_a += str("}")
+                grafo = pydot.graph_from_dot_data(self.graficar_a)
+                (g,) = grafo
+                g.write_jpg(auxnombre + ".jpg")
+
+    def aux_preorden(self, nodo, nombre):
+        if nodo is not None:
+            self.graficar_a += str("a_" + str(self.indicenodo) + "[label=\"" + nodo.getCarnet() + "\\n" + nodo.getNombre() + "\"];\n")
+            self.indicenodo += 1
+            self.aux_preorden(nodo.getIzquierdo(), "I")
+            self.aux_preorden(nodo.getDerecho(), "D")
