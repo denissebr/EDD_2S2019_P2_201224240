@@ -223,3 +223,16 @@ class arbol:
         hd.setPadre(padre)
         actual.setFe(0)
         hd.setFe(0)        
+
+    def Calcular_Altura_Nodo(self, nodo):
+        self.altura = 0
+        self.AuxAltura(nodo, 0)
+        return self.altura
+
+    def AuxAltura(self, nodo, valor):
+        if nodo.getIzquierdo():
+            self.AuxAltura(nodo.getIzquierdo(), valor + 1)
+        if nodo.getDerecho():
+            self.AuxAltura(nodo.getDerecho(), valor + 1)
+        if nodo.getIzquierdo() == None and nodo.getDerecho() == None and valor > self.altura:
+            self.altura = valor  

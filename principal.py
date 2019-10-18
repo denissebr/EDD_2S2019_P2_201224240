@@ -109,9 +109,9 @@ while True:
                 server.sendall(json_str.encode('utf-8'))
                 sys.stdout.flush()
                 json_Data = json.loads(json_str)
-                window.clear()
-                window.border(0)
-                menup.pintarmenu()
+            window.clear()
+            window.border(0)
+            menup.pintarmenu()
         else:
             if event == 50:
                 datarecibida = lista.seleccionarbloque(window)
@@ -124,6 +124,6 @@ while True:
                     window.clear()
                     window.border(0)
                     menup.pintarmenu()
-
+        
 curses.endwin()
 server.close()

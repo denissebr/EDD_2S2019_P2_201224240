@@ -6,6 +6,7 @@ class graficar:
     def __init__(self, window):
         self.window = window
         self.arbol = arbol.arbol()
+        self.graficar_a = ""
 
     def graficar_lista(self, lista):
         self.window.clear()
@@ -85,6 +86,7 @@ class graficar:
         self.window.clear()
         self.window.border(0)
         self.window.addstr(0, 0, "PRESIONAR ESC PARA REGRESAR")
+        self.graficar_a = ""
         if data is not None:
             self.window.addstr(16, 15, "NOMBRE DEL REPORTE:")
             self.window.addstr(17, 15, "PRESIONAR ENTER PARA GENERAR REPORTE")
@@ -120,7 +122,16 @@ class graficar:
                         else:
                             if (tecla == 459 or tecla == 10) and posicioninicial != posx:
                                 break
-            self.recorrerjson(data) 
+            if posicioninicial != posx:
+                self.recorrerjson(data) 
+                self.graficar_a = "digraph{\n"
+                self.graficar_a += str("node[shape = record];\n")
+                self.nodos(self.arbol.raiz, "R")
+                self.relacionar(self.arbol.raiz, "R")
+                self.graficar_a += str("}")
+                grafo = pydot.graph_from_dot_data(self.graficar_a)
+                (g,) = grafo
+                g.write_jpg(auxnombre + ".jpg")
             print("es json")
         else:
             self.window.addstr(16, 15, "NO HA SELECCIONADO NINGUN BLOQUE")
@@ -137,7 +148,10 @@ class graficar:
                 print(carac)
                 if carac == 'value':
                     print(json_data['value'])
-                    
+                    auxval = str(json_data['value']).split("-")
+                    carnet = auxval[0]
+                    nombre = auxval[1]
+                    self.arbol.insertar(carnet, nombre)
                 else:
                     if carac == 'left':
                         print("json", json.dumps(json_data['left']))
@@ -148,6 +162,34 @@ class graficar:
                         self.recorrerjson(json.dumps(json_data['right']))
         except:
             print("execpt")
+        
+
+    def nodos(self, nod, nombre):
+        if nod is not None:
+            auxalt = self.arbol.Calcular_Altura_Nodo(nod)
+            self.graficar_a += str("a" + nombre + "[label=\"<f0>|{<f1>Carnet: " + str(nod.getCarnet()) + "\\nNombre: " + str(nod.getNombre()) + "\\nFE: " + str(nod.getFe()) + "\\nAltura" + str(auxalt) + "}|<f2>\"];\n")
+            if nod.getIzquierdo() is not None:
+                auxnombre = nombre + "I"
+                self.nodos(nod.getIzquierdo(), auxnombre)
+            if nod.getDerecho() is not None:
+                auxnombre = nombre + "D"
+                self.nodos(nod.getDerecho(), auxnombre)
+        
+    def relacionar(self, nod, nombre):
+        if nod is not None:
+            if nod.getDerecho() is not None:
+                self.graficar_a += str("a" + nombre + ":<f2>->a" + nombre + "D:<f1>;\n")
+            
+            if nod.getIzquierdo() is not None:
+                self.graficar_a += str("a" + nombre + ":<f0>->a" + nombre + "I:<f1>;\n")
+
+            if nod.getIzquierdo() is not None:
+                auxnombre = nombre + "I"
+                self.relacionar(nod.getIzquierdo(), auxnombre)
+            
+            if nod.getDerecho() is not None:
+                auxnombre = nombre + "D"
+                self.relacionar(nod.getDerecho(), auxnombre)
     
     def graficar_recorridos(self, data):
         self.window.clear()

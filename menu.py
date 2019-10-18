@@ -53,6 +53,7 @@ class menu:
         while True:
             tecla = self.window.getch()
             if tecla == 27:
+                self.window.addstr(1, 1, "ESC")
                 return None, None, None, None, None, None
             else: 
                 if (tecla > 31 and tecla < 127):
