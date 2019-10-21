@@ -110,7 +110,7 @@ class menu:
                                 with open(auxpath, newline='') as File:
                                     reader = csv.reader(File)
                                     for reg in reader:
-                                        numero = 0
+                                        #cada reg es una linea del archivo y cada carac es un campo separado por ,
                                         for carac in reg:
                                             if carac == "CLASS" or carac == "class":
                                                 esclass = True
@@ -124,17 +124,27 @@ class menu:
                                                         clase += carac
                                                     else:
                                                         if esdata == True:
+                                                            #como separa todo por , se tiene que concatenar la , para armar el json de la data
                                                             data += carac + ","
 
-                                data = data[:-1]
+                                data = data[:-1]#con esto se le quita el ultimo caracter a la data
                                 timestamp = ""
                                 timestamp += time.strftime("%d-%m-%y")
                                 timestamp += "-::"
                                 timestamp += time.strftime("%H:%M:%S")
                                 index = lista.getLastIndex()
                                 hashprevio = lista.getUltimoHash()
-                                hashnuevo = hashlib.sha256(str(index).encode('utf-8')+str(timestamp).encode('utf-8')+str(clase).encode('utf-8')+str(data).encode('utf-8')+str(hashprevio).encode('utf-8'))
+                                auxprevioushash = ""
+                                if index == 0:
+                                    auxprevioushash = "0000"
+                                else:
+                                    auxprevioushash = hashprevio
+                                #concatena todos los valores para encontrar el hash
+                                cadena = str(index)+timestamp+clase+str(data)+auxprevioushash
+                                print(cadena)
+                                #genera el hash
+                                hashnuevo = hashlib.sha256(cadena.encode('utf-8'))
                                 #lista.insertar(index, timestamp, clase, data, lista.getUltimoHash(), hashnuevo)
-                                return index, timestamp, clase, data, hashprevio, hashnuevo.hexdigest()
+                                return index, timestamp, clase, data, auxprevioushash, hashnuevo.hexdigest()
                             else:
                                 self.window.addstr(18, 36, "EL ARCHIVO NO EXISTE")
